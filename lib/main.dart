@@ -11,7 +11,7 @@ class DriftChampionshipApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Drift Championship App',
+      title: 'Championship App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -25,7 +25,7 @@ class ChampionshipLevelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Championship Level'),
+        title: Text('Select Championship'),
       ),
       body: Center(
         child: Column(
@@ -36,26 +36,11 @@ class ChampionshipLevelScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ParticipantsScreen(
-                      championshipLevel: 'Street',
-                    ),
+                    builder: (context) => ParticipantsScreen(),
                   ),
                 );
               },
-              child: Text('Street Championship'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ParticipantsScreen(
-                      championshipLevel: 'Semi PRO',
-                    ),
-                  ),
-                );
-              },
-              child: Text('Semi PRO Championship'),
+              child: Text('Drift Championship'),
             ),
           ],
         ),
@@ -65,10 +50,6 @@ class ChampionshipLevelScreen extends StatelessWidget {
 }
 
 class ParticipantsScreen extends StatefulWidget {
-  final String championshipLevel;
-
-  ParticipantsScreen({required this.championshipLevel});
-
   @override
   _ParticipantsScreenState createState() => _ParticipantsScreenState();
 }
@@ -109,7 +90,7 @@ class _ParticipantsScreenState extends State<ParticipantsScreen> {
     // Display the championship and driver information.
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.championshipLevel} Championship Participants'),
+        title: Text('Select Championship levels'),
       ),
       body: ListView.builder(
         itemCount: championships.length,
