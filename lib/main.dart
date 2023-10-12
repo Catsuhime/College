@@ -117,21 +117,61 @@ class _ParticipantsScreenState extends State<ParticipantsScreen> {
   }
 }
 
-class DriverDetailsScreen extends StatelessWidget {
+class DriverDetailsScreen extends StatefulWidget {
   final Championship championship;
 
   DriverDetailsScreen({required this.championship});
+
+  @override
+  _DriverDetailsScreenState createState() => _DriverDetailsScreenState();
+}
+
+class _DriverDetailsScreenState extends State<DriverDetailsScreen> {
+  List<Driver> filteredDrivers = [];
+  bool sortByPoints = false;
+
+  @override
+  void initState() {
+    filteredDrivers = List.from(widget.championship.drivers);
+    super.initState();
+  }
+
+  void filterDriversAlphabetically() {
+    setState(() {
+      filteredDrivers.sort((a, b) =>
+          a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase()));
+      sortByPoints = false;
+    });
+  }
+
+  void filterDriversByPoints() {
+    setState(() {
+      filteredDrivers.sort((a, b) =>
+          a.races.last.tandemPoints.compareTo(b.races.last.tandemPoints));
+      sortByPoints = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Driver Details'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.sort_by_alpha),
+            onPressed: filterDriversAlphabetically,
+          ),
+          IconButton(
+            icon: Icon(Icons.sort),
+            onPressed: filterDriversByPoints,
+          ),
+        ],
       ),
       body: ListView.builder(
-        itemCount: championship.drivers.length,
+        itemCount: filteredDrivers.length,
         itemBuilder: (context, index) {
-          final driver = championship.drivers[index];
+          final driver = filteredDrivers[index];
           return ListTile(
             title: Text('${driver.firstName} ${driver.lastName}'),
             subtitle: Text('Car: ${driver.car}'),
@@ -152,6 +192,7 @@ class DriverDetailsScreen extends StatelessWidget {
     );
   }
 }
+
 
 class RaceDetailsScreen extends StatelessWidget {
   final Driver driver;
@@ -273,8 +314,3 @@ class Race {
     );
   }
 }
-
-
-
-     
-
