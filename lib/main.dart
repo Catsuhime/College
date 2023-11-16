@@ -1,7 +1,5 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 void main() {
   runApp(DriftChampionshipApp());
@@ -136,6 +134,14 @@ class _DriverDetailsScreenState extends State<DriverDetailsScreen> {
     super.initState();
   }
 
+  double calculateTotalScore(Driver driver) {
+    double totalScore = 0.0;
+    for (var race in driver.races) {
+      totalScore += race.tandemPoints + race.qualificationPoints;
+    }
+    return totalScore;
+  }
+
   void filterDriversAlphabetically() {
     setState(() {
       filteredDrivers.sort((a, b) =>
@@ -146,8 +152,11 @@ class _DriverDetailsScreenState extends State<DriverDetailsScreen> {
 
   void filterDriversByPoints() {
     setState(() {
-      filteredDrivers.sort((a, b) =>
-          a.races.last.tandemPoints.compareTo(b.races.last.tandemPoints));
+      filteredDrivers.sort((a, b) {
+        final totalPointsA = calculateTotalScore(a);
+        final totalPointsB = calculateTotalScore(b);
+        return totalPointsB.compareTo(totalPointsA); // Sort in descending order
+      });
       sortByPoints = true;
     });
   }
@@ -172,26 +181,38 @@ class _DriverDetailsScreenState extends State<DriverDetailsScreen> {
         itemCount: filteredDrivers.length,
         itemBuilder: (context, index) {
           final driver = filteredDrivers[index];
-          return ListTile(
-            title: Text('${driver.firstName} ${driver.lastName}'),
-            subtitle: Text('Car: ${driver.car}'),
-            onTap: () {
-              // Navigate to a screen to display driver's race details.
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RaceDetailsScreen(
-                    driver: driver,
-                  ),
-                ),
-              );
-            },
+          final totalScore = calculateTotalScore(driver);
+
+          return Column(
+            children: [
+              ListTile(
+                title: Text('${driver.firstName} ${driver.lastName}'),
+                subtitle: Text('Car: ${driver.car}'),
+                onTap: () {
+                  // Navigate to a screen to display driver's race details.
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RaceDetailsScreen(
+                        driver: driver,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Total Score: $totalScore'),
+              ),
+              Divider(),
+            ],
           );
         },
       ),
     );
   }
 }
+
 
 
 class RaceDetailsScreen extends StatelessWidget {
